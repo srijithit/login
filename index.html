@@ -4,7 +4,6 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Login Authentication Center</title>
-
   <style>
     body {
       font-family: Arial, sans-serif;
@@ -24,146 +23,18 @@
       text-align: center;
     }
 
+    .login-container h2 {
+      margin-bottom: 20px;
+    }
+
     .login-container input {
       width: 100%;
       padding: 10px;
       margin: 10px 0;
-      border-radius: 5px;
       border: 1px solid #ccc;
+      border-radius: 5px;
     }
 
     .login-container button {
       width: 100%;
       padding: 10px;
-      background-color: #28a745;
-      border: none;
-      color: white;
-      border-radius: 5px;
-      cursor: pointer;
-    }
-
-    .message {
-      margin-top: 15px;
-      font-weight: bold;
-    }
-
-    .success { color: green; }
-    .error { color: red; }
-
-    #nextBtn {
-      display: none;
-      margin-top: 15px;
-      background: black;
-    }
-
-    .loader {
-      display: none;
-      margin: 15px auto;
-      width: 40px;
-      height: 40px;
-      border: 4px solid #ddd;
-      border-top: 4px solid #28a745;
-      border-radius: 50%;
-      animation: spin 1s linear infinite;
-    }
-
-    @keyframes spin {
-      0% { transform: rotate(0deg); }
-      100% { transform: rotate(360deg); }
-    }
-
-    .loading-text {
-      display: none;
-      font-size: 14px;
-      color: #555;
-    }
-  </style>
-</head>
-
-<body>
-  <div class="login-container">
-    <h2>Sri web Login</h2>
-
-    <input id="username" placeholder="Username">
-    <input id="password" type="password" placeholder="Password">
-
-    <button id="loginBtn" onclick="authenticate()">Sign In</button>
-
-    <div class="loader" id="loader"></div>
-    <div class="loading-text" id="loadingText">Authenticating...</div>
-
-    <div class="message" id="message"></div>
-    <button id="nextBtn" onclick="goNext()">Next</button>
-  </div>
-
-  <script>
-    async function authenticate() {
-      const username = document.getElementById("username").value.trim();
-      const password = document.getElementById("password").value.trim();
-      const message = document.getElementById("message");
-      const loader = document.getElementById("loader");
-      const loadingText = document.getElementById("loadingText");
-      const loginBtn = document.getElementById("loginBtn");
-      const nextBtn = document.getElementById("nextBtn");
-
-      if (!username || !password) {
-        message.textContent = "Enter username and password";
-        message.className = "message error";
-        return;
-      }
-
-      loader.style.display = "block";
-      loadingText.style.display = "block";
-      loginBtn.disabled = true;
-      message.textContent = "";
-      nextBtn.style.display = "none";
-
-      const API =
-        "https://api.allorigins.win/raw?url=https://keyauth.win/api/1.2/";
-
-      const data = new URLSearchParams();
-      data.append("type", "login");
-      data.append("username", username);
-      data.append("password", password);
-      data.append("name", "Srivaladeno's Application");
-      data.append("ownerid", "0ZvEGHYl1y");
-      data.append("secret", "efc633bb5f3f84146393154815a4b4bd068e0745ae47d5f826875bfe5cef760d");
-      data.append("version", "1.0");
-
-      try {
-        const res = await fetch(API, {
-          method: "POST",
-          headers: { "Content-Type": "application/x-www-form-urlencoded" },
-          body: data.toString()
-        });
-
-        const text = await res.text();
-        console.log("KeyAuth:", text);
-
-        const json = JSON.parse(text);
-
-        if (json.success) {
-          message.textContent = "Login successful!";
-          message.className = "message success";
-          nextBtn.style.display = "block";
-        } else {
-          message.textContent = json.message || "Login failed";
-          message.className = "message error";
-        }
-
-      } catch (e) {
-        message.textContent = "Network / Proxy blocked";
-        message.className = "message error";
-      }
-
-      loader.style.display = "none";
-      loadingText.style.display = "none";
-      loginBtn.disabled = false;
-    }
-
-    function goNext() {
-      window.location.href = "https://srijithit.github.io/sriit";
-    }
-  </script>
-</body>
-</html>
