@@ -38,3 +38,81 @@
     .login-container button {
       width: 100%;
       padding: 10px;
+      background-color: #28a745;
+      border: none;
+      color: white;
+      font-size: 16px;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
+    .login-container button:hover {
+      background-color: #218838;
+    }
+
+    .message {
+      margin-top: 15px;
+      font-weight: bold;
+    }
+
+    .success {
+      color: green;
+    }
+
+    .error {
+      color: red;
+    }
+
+    #nextBtn {
+      margin-top: 15px;
+      display: none;
+      background-color: black;
+    }
+
+    #nextBtn:hover {
+      background-color: green;
+    }
+  </style>
+</head>
+<body>
+  <div class="login-container">
+    <h2>Sri web Login</h2>
+    <h4>ASK SRI FOR PASS</h4>
+    <input type="text" id="username" placeholder="Username" />
+    <input type="password" id="password" placeholder="Password" />
+    <button onclick="authenticate()">Sign In</button>
+    <div class="message" id="message"></div>
+    
+    <!-- Next button appears only after successful login -->
+    <button id="nextBtn" onclick="goNext()">Next</button>
+  </div>
+
+  <script>
+    function authenticate() {
+      const username = document.getElementById('username').value;
+      const password = document.getElementById('password').value;
+      const message = document.getElementById('message');
+      const nextBtn = document.getElementById('nextBtn');
+
+      // Hardcoded credentials
+      const validUsername = "1";
+      const validPassword = "1";
+
+      if (username === validUsername && password === validPassword) {
+        message.textContent = "Login successful!";
+        message.className = "message success";
+        nextBtn.style.display = "block"; // Show Next button
+      } else {
+        message.textContent = "Invalid username or password.";
+        message.className = "message error";
+        nextBtn.style.display = "none"; // Hide Next button
+      }
+    }
+
+    function goNext() {
+      // Redirect to another page or URL
+      window.location.href = "https://srijithit.github.io/sriit"; // change this to your target URL
+    }
+  </script>
+</body>
+</html>
