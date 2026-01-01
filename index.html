@@ -3,10 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Srijith website Login</title>
-
-  <!-- KeyAuth JS (unofficial / demo style) -->
-  <script src="https://cdn.jsdelivr.net/gh/keyauth/keyauth-js@main/keyauth.js"></script>
+  <title>Sri login page</title>
 
   <style>
     body {
@@ -17,6 +14,7 @@
       align-items: center;
       height: 100vh;
     }
+
     .login-container {
       background: #fff;
       padding: 30px;
@@ -25,24 +23,74 @@
       width: 300px;
       text-align: center;
     }
+
+    .login-container h2 {
+      margin-bottom: 10px;
+    }
+
     .login-container input {
       width: 100%;
       padding: 10px;
       margin: 10px 0;
+      border: 1px solid #ccc;
       border-radius: 5px;
     }
+
     .login-container button {
       width: 100%;
       padding: 10px;
       background-color: #28a745;
+      border: none;
       color: white;
+      font-size: 16px;
       border-radius: 5px;
       cursor: pointer;
     }
-    .message { margin-top: 15px; font-weight: bold; }
+
+    .login-container button:hover {
+      background-color: #218838;
+    }
+
+    .message {
+      margin-top: 15px;
+      font-weight: bold;
+    }
+
     .success { color: green; }
     .error { color: red; }
-    #nextBtn { display: none; background: black; margin-top: 10px; }
+
+    #nextBtn {
+      margin-top: 15px;
+      display: none;
+      background-color: black;
+    }
+
+    #nextBtn:hover {
+      background-color: green;
+    }
+
+    /* 🔄 Loader */
+    .loader {
+      display: none;
+      margin: 15px auto;
+      width: 40px;
+      height: 40px;
+      border: 4px solid #ddd;
+      border-top: 4px solid #28a745;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    .loading-text {
+      display: none;
+      font-size: 14px;
+      color: #555;
+    }
   </style>
 </head>
 
@@ -51,45 +99,85 @@
     <h2>Sri web Login</h2>
     <h4>ASK SRI FOR PASS</h4>
 
-    <input id="username" placeholder="Username">
-    <input id="password" type="password" placeholder="Password">
+    <input type="text" id="username" placeholder="Username" />
+    <input type="password" id="password" placeholder="Password" />
 
-    <button onclick="authenticate()">Sign In</button>
+    <button id="loginBtn" onclick="authenticate()">Sign In</button>
+
+    <div class="loader" id="loader"></div>
+    <div class="loading-text" id="loadingText">Authenticating...</div>
 
     <div class="message" id="message"></div>
+
     <button id="nextBtn" onclick="goNext()">Next</button>
   </div>
 
   <script>
-    // ✅ KeyAuth added directly (as requested)
-    const KeyAuthApp = new KeyAuth({
-      name: "Srivaladeno's Application",
-      ownerid: "0ZvEGHYl1y",
-      version: "1.0"
-    });
-
     async function authenticate() {
       const username = document.getElementById("username").value;
       const password = document.getElementById("password").value;
       const message = document.getElementById("message");
       const nextBtn = document.getElementById("nextBtn");
+      const loader = document.getElementById("loader");
+      const loadingText = document.getElementById("loadingText");
+      const loginBtn = document.getElementById("loginBtn");
+
+      if (!username || !password) {
+        message.textContent = "Enter username and password";
+        message.className = "message error";
+        return;
+      }
+
+      // UI state
+      loader.style.display = "block";
+      loadingText.style.display = "block";
+      message.textContent = "";
+      nextBtn.style.display = "none";
+      loginBtn.disabled = true;
+      loginBtn.style.opacity = "0.6";
+
+      // 🔴 CORS proxy (needed for browser)
+      const API_URL = "https://corsproxy.io/?https://keyauth.win/api/1.2/";
+
+      const formData = new URLSearchParams();
+      formData.append("type", "login");
+      formData.append("username", username);
+      formData.append("password", password);
+      formData.append("name", "Srivaladeno's Application");
+      formData.append("ownerid", "0ZvEGHYl1y");
+      formData.append("secret", "abe58e86864b0bde4cc3d210acc71479df0d23125ca30152a67155eb41776b14"); 
+      formData.append("version", "1.0");
 
       try {
-        const result = await KeyAuthApp.login(username, password);
+        const res = await fetch(API_URL, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/x-www-form-urlencoded"
+          },
+          body: formData.toString()
+        });
 
-        if (result.success) {
+        const data = await res.json();
+
+        if (data.success) {
           message.textContent = "Login successful!";
           message.className = "message success";
           nextBtn.style.display = "block";
         } else {
-          message.textContent = result.message || "Login failed";
+          message.textContent = data.message || "Login failed";
           message.className = "message error";
-          nextBtn.style.display = "none";
         }
-      } catch (e) {
-        message.textContent = "KeyAuth error";
+
+      } catch (err) {
+        message.textContent = "Network / CORS error";
         message.className = "message error";
       }
+
+      // Reset UI
+      loader.style.display = "none";
+      loadingText.style.display = "none";
+      loginBtn.disabled = false;
+      loginBtn.style.opacity = "1";
     }
 
     function goNext() {
@@ -97,4 +185,4 @@
     }
   </script>
 </body>
-</html>
+</html
