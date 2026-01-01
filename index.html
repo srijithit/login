@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Sri login page</title>
+  <title>Login Authentication Center</title>
 
   <style>
     body {
@@ -24,16 +24,12 @@
       text-align: center;
     }
 
-    .login-container h2 {
-      margin-bottom: 10px;
-    }
-
     .login-container input {
       width: 100%;
       padding: 10px;
       margin: 10px 0;
-      border: 1px solid #ccc;
       border-radius: 5px;
+      border: 1px solid #ccc;
     }
 
     .login-container button {
@@ -42,13 +38,8 @@
       background-color: #28a745;
       border: none;
       color: white;
-      font-size: 16px;
       border-radius: 5px;
       cursor: pointer;
-    }
-
-    .login-container button:hover {
-      background-color: #218838;
     }
 
     .message {
@@ -60,16 +51,11 @@
     .error { color: red; }
 
     #nextBtn {
-      margin-top: 15px;
       display: none;
-      background-color: black;
+      margin-top: 15px;
+      background: black;
     }
 
-    #nextBtn:hover {
-      background-color: green;
-    }
-
-    /* 🔄 Loader */
     .loader {
       display: none;
       margin: 15px auto;
@@ -97,10 +83,9 @@
 <body>
   <div class="login-container">
     <h2>Sri web Login</h2>
-    <h4>ASK SRI FOR PASS</h4>
 
-    <input type="text" id="username" placeholder="Username" />
-    <input type="password" id="password" placeholder="Password" />
+    <input id="username" placeholder="Username">
+    <input id="password" type="password" placeholder="Password">
 
     <button id="loginBtn" onclick="authenticate()">Sign In</button>
 
@@ -108,19 +93,18 @@
     <div class="loading-text" id="loadingText">Authenticating...</div>
 
     <div class="message" id="message"></div>
-
     <button id="nextBtn" onclick="goNext()">Next</button>
   </div>
 
   <script>
     async function authenticate() {
-      const username = document.getElementById("username").value;
-      const password = document.getElementById("password").value;
+      const username = document.getElementById("username").value.trim();
+      const password = document.getElementById("password").value.trim();
       const message = document.getElementById("message");
-      const nextBtn = document.getElementById("nextBtn");
       const loader = document.getElementById("loader");
       const loadingText = document.getElementById("loadingText");
       const loginBtn = document.getElementById("loginBtn");
+      const nextBtn = document.getElementById("nextBtn");
 
       if (!username || !password) {
         message.textContent = "Enter username and password";
@@ -128,56 +112,53 @@
         return;
       }
 
-      // UI state
       loader.style.display = "block";
       loadingText.style.display = "block";
+      loginBtn.disabled = true;
       message.textContent = "";
       nextBtn.style.display = "none";
-      loginBtn.disabled = true;
-      loginBtn.style.opacity = "0.6";
 
-      // 🔴 CORS proxy (needed for browser)
-      const API_URL = "https://corsproxy.io/?https://keyauth.win/api/1.2/";
+      const API =
+        "https://api.allorigins.win/raw?url=https://keyauth.win/api/1.2/";
 
-      const formData = new URLSearchParams();
-      formData.append("type", "login");
-      formData.append("username", username);
-      formData.append("password", password);
-      formData.append("name", "Srivaladeno's Application");
-      formData.append("ownerid", "0ZvEGHYl1y");
-      formData.append("secret", "abe58e86864b0bde4cc3d210acc71479df0d23125ca30152a67155eb41776b14"); 
-      formData.append("version", "1.0");
+      const data = new URLSearchParams();
+      data.append("type", "login");
+      data.append("username", username);
+      data.append("password", password);
+      data.append("name", "Srivaladeno's Application");
+      data.append("ownerid", "0ZvEGHYl1y");
+      data.append("secret", "efc633bb5f3f84146393154815a4b4bd068e0745ae47d5f826875bfe5cef760d");
+      data.append("version", "1.0");
 
       try {
-        const res = await fetch(API_URL, {
+        const res = await fetch(API, {
           method: "POST",
-          headers: {
-            "Content-Type": "application/x-www-form-urlencoded"
-          },
-          body: formData.toString()
+          headers: { "Content-Type": "application/x-www-form-urlencoded" },
+          body: data.toString()
         });
 
-        const data = await res.json();
+        const text = await res.text();
+        console.log("KeyAuth:", text);
 
-        if (data.success) {
+        const json = JSON.parse(text);
+
+        if (json.success) {
           message.textContent = "Login successful!";
           message.className = "message success";
           nextBtn.style.display = "block";
         } else {
-          message.textContent = data.message || "Login failed";
+          message.textContent = json.message || "Login failed";
           message.className = "message error";
         }
 
-      } catch (err) {
-        message.textContent = "Network / CORS error";
+      } catch (e) {
+        message.textContent = "Network / Proxy blocked";
         message.className = "message error";
       }
 
-      // Reset UI
       loader.style.display = "none";
       loadingText.style.display = "none";
       loginBtn.disabled = false;
-      loginBtn.style.opacity = "1";
     }
 
     function goNext() {
@@ -185,4 +166,4 @@
     }
   </script>
 </body>
-</html
+</html>
